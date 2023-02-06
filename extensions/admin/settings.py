@@ -28,9 +28,10 @@ class SettingsCog(commands.Cog):
             guild = ctx.guild_id
         )
         embed = discord.Embed(title = "Success",
-                              description = f"Successfully set {setting} to {value}",
+                              description = f"Successfully set {setting} to <@&{value}>",
                               color = discord.Color.brand_green())
-        await ctx.response.send_message(embed = embed)
+        await ctx.response.send_message(embed = embed,
+                                        ephemeral = True)
 
 
 def setup(client: DragonBot):
