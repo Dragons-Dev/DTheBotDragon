@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+# py-charm
+/.idea/.gitignore
+/.idea/discord.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/pythonProject.iml
+/.idea/vcs.xml
+.vscode
