@@ -24,7 +24,7 @@ ascii_art = """
 
 def pre_start_hook():
     print(ascii_art)
-    client.load_extensions("extensions", recursive = True)
+    client.load_extensions("extensions", recursive=True)
 
 
 class DragonBot(commands.Bot):
@@ -33,7 +33,9 @@ class DragonBot(commands.Bot):
 
     async def on_ready(self) -> None:
         try:
-            log.info(f"Bot started as {self.user.name}#{self.user.discriminator} | {self.user.id}")
+            log.info(
+                f"Bot started as {self.user.name}#{self.user.discriminator} | {self.user.id}"
+            )
         except UnicodeEncodeError:
             log.info("Bot started")
         await db.set_up()
@@ -41,13 +43,13 @@ class DragonBot(commands.Bot):
 
 
 client = DragonBot(
-    command_prefix = commands.when_mentioned,
-    case_insensitive = True,
-    strip_after_prefix = True,
-    intents = discord.Intents.all(),
-    debug_guilds = config.GUILDS,
-    activity = discord.Activity(type = discord.ActivityType.watching, name = "you"),
-    state = discord.Status.online,
+    command_prefix=commands.when_mentioned,
+    case_insensitive=True,
+    strip_after_prefix=True,
+    intents=discord.Intents.all(),
+    debug_guilds=config.GUILDS,
+    activity=discord.Activity(type=discord.ActivityType.watching, name="you"),
+    state=discord.Status.online,
 )
 
 
