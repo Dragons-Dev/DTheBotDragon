@@ -42,12 +42,11 @@ class TimeoutCog(commands.Cog):
                 discord.OptionChoice("1 w"),
                 discord.OptionChoice("2 w"),
                 discord.OptionChoice("3 w"),
-                discord.OptionChoice("4 w"),
             ],
         ),
         reason: discord.Option(
-            description = "a reason for the timeout",
-            )
+            description="a reason for the timeout",
+        ),
     ):
         team_id = await db.get_setting(setting="team role", guild=str(ctx.guild_id))
         if team_id is None:
@@ -85,26 +84,34 @@ class TimeoutCog(commands.Cog):
                     setting="mod log channel", guild=ctx.guild_id
                 )
                 em = discord.Embed(
-                    description = f"**Member: **{user.name}#{user.discriminator} ({user.id})\n**Action: **Timeout until {until.strftime('%d.%m.%Y %H:%M')}\n**Reason: **{reason}",
-                    timestamp = datetime.datetime.now(),
-                    color = discord.Color.gold(),
+                    description=f"**Member: **{user.name}#{user.discriminator} ({user.id})\n**Action: **Timeout until {until.strftime('%d.%m.%Y %H:%M')}\n**Reason: **{reason}",
+                    timestamp=datetime.datetime.now(),
+                    color=discord.Color.gold(),
                 )
                 em.set_author(
-                    name = f"{ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})",
-                    icon_url = ctx.author.display_avatar,
+                    name=f"{ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})",
+                    icon_url=ctx.author.display_avatar,
                 )
-                em.set_footer(text = f"Case: {len(await db.get_mod_action(action = '*'))}")
+                em.set_footer(
+                    text=f"Case: {len(await db.get_mod_action(action = '*'))}"
+                )
+                await db.add_mod_action(
+                    member=user.id,
+                    moderator=ctx.author.id,
+                    reason=reason,
+                    action="Timeout",
+                )
                 if log is None:
                     await ctx.response.send_message(
-                        content = f"Please set a log channel to send logs.",
-                        embed = em,
-                        ephemeral = True,
+                        content=f"Please set a log channel to send logs.",
+                        embed=em,
+                        ephemeral=True,
                     )
 
                 else:
                     log = self.client.get_channel(int(log[0]))
-                    await ctx.response.send_message(embed = em, ephemeral = True)
-                    await log.send(embed = em)
+                    await ctx.response.send_message(embed=em, ephemeral=True)
+                    await log.send(embed=em)
                 break
         else:
             await ctx.response.send_message(f"You are not allowed to timeout a user.")
