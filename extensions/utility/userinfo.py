@@ -52,8 +52,8 @@ class UserCog(commands.Cog):
             if int(team_id[0]) == int(role.id):
                 response = await db.get_mod_action(member=user.id)
                 if len(response) == 0:
-                    em.add_field(name = "Warns", value = "Zero warnings")
-                    await ctx.response.send_message(embed = em, ephemeral = True)
+                    em.add_field(name="Warns", value="Zero warnings")
+                    await ctx.response.send_message(embed=em, ephemeral=True)
                     break
                 counter = 0
                 for item in response:
@@ -69,8 +69,8 @@ class UserCog(commands.Cog):
                     counter += 1
                     if counter > 20:
                         em.add_field(
-                            name = ":warning: And more :warning:",
-                            value = f"Total: {len(response)}"
+                            name=":warning: And more :warning:",
+                            value=f"Total: {len(response)}",
                         )
                         break
                 await ctx.response.send_message(embed=em, ephemeral=True)

@@ -97,7 +97,10 @@ async def add_mod_action(member: int, moderator: int, reason: str, action: str) 
 
 
 async def get_mod_action(
-    id: int = None, member: int = None, moderator: int = None, action: str = None,
+    id: int = None,
+    member: int = None,
+    moderator: int = None,
+    action: str = None,
 ) -> tuple | list[tuple] | None:
 
     if id is not None:
