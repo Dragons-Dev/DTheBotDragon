@@ -69,7 +69,7 @@ class BanCog(commands.Cog):
                     await log.send(embed=em)
                 break
         else:
-            await ctx.response.send_message(f"You are not allowed to ban a user.")
+            await ctx.response.send_message(f"You are not allowed to ban a user.", ephemeral = True)
 
 
 def setup(client: DragonBot):

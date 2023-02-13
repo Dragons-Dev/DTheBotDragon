@@ -97,8 +97,24 @@ async def add_mod_action(member: int, moderator: int, reason: str, action: str) 
 
 
 async def get_mod_action(
-    member: int = None, action: str = None
+    id: int = None, member: int = None, moderator: int = None, action: str = None,
 ) -> tuple | list[tuple] | None:
+
+    if id is not None:
+        async with aiosqlite.connect(DBPATH) as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute(
+                    """
+                    SELECT id, member, moderator, reason, action, time FROM mod_actions WHERE id = ?
+                    """,
+                    (id,),
+                )
+                response = await cursor.fetchall()
+                if response is None:
+                    return None
+                else:
+                    return response
+
     if member is not None:
         async with aiosqlite.connect(DBPATH) as conn:
             async with conn.cursor() as cursor:
@@ -113,6 +129,22 @@ async def get_mod_action(
                     return None
                 else:
                     return response
+
+    if moderator is not None:
+        async with aiosqlite.connect(DBPATH) as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute(
+                    """
+                    SELECT id, member, moderator, reason, action, time FROM mod_actions WHERE moderator = ?
+                    """,
+                    (moderator,),
+                )
+                response = await cursor.fetchall()
+                if response is None:
+                    return None
+                else:
+                    return response
+
     if action == "*":
         async with aiosqlite.connect(DBPATH) as conn:
             async with conn.cursor() as cursor:
@@ -126,6 +158,7 @@ async def get_mod_action(
                     return 0
                 else:
                     return response
+
     if action is not None:
         async with aiosqlite.connect(DBPATH) as conn:
             async with conn.cursor() as cursor:
