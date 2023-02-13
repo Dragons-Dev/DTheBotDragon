@@ -51,9 +51,13 @@ class UserCog(commands.Cog):
         for role in ctx.author.roles:
             if int(team_id[0]) == int(role.id):
                 response = await db.get_mod_action(member=user.id)
+                if len(response) == 0:
+                    em.add_field(name="Warns", value="Zero warnings")
+                    await ctx.response.send_message(embed=em, ephemeral=True)
+                    break
                 counter = 0
                 for item in response:
-                    pub_id, moderator, reason, action, date = item
+                    pub_id, _, moderator, reason, action, date = item
                     date1, date2 = date.split(" ")
                     date1 = date1.split("-")
                     date = f"{date1[2]}.{date1[1]}.{date1[0]} {date2}"
@@ -63,12 +67,15 @@ class UserCog(commands.Cog):
                         inline=False,
                     )
                     counter += 1
-                    if counter > 24:
+                    if counter > 20:
+                        em.add_field(
+                            name=":warning: And more :warning:",
+                            value=f"Total: {len(response)}",
+                        )
                         break
                 await ctx.response.send_message(embed=em, ephemeral=True)
                 break
         else:
-
             await ctx.response.send_message(embed=em, ephemeral=True)
 
 
