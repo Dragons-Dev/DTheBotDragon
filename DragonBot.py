@@ -34,15 +34,14 @@ class DragonBot(commands.Bot):
         self.first_start = False
 
     async def on_ready(self) -> None:
-        log.info(f"Bot started as {self.user.name}#{self.user.discriminator} | {self.user.id}")
+        log.info(
+            f"Bot started as {self.user.name}#{self.user.discriminator} | {self.user.id}"
+        )
         await db.set_up()
         log.debug("Database setup successful")
         if not self.first_start:
             await NodePool.create_node(
-                bot = self,
-                host = "localhost",
-                port = 2333,
-                password = "youshallnotpass"
+                bot=self, host="localhost", port=2333, password="youshallnotpass"
             )
             self.first_start = True
 

@@ -15,11 +15,15 @@ log = logging.getLogger("DragonLog")
 
 async def edit_panel(vc: wavelink.Player):
     track: wavelink.YouTubeTrack = vc.track
-    msg_id_db = await db.get_setting(setting = "music_panel", guild = vc.guild.id)
-    channel_id_db = await db.get_setting(setting = "music_panel_channel", guild = vc.guild.id)
+    msg_id_db = await db.get_setting(setting="music_panel", guild=vc.guild.id)
+    channel_id_db = await db.get_setting(
+        setting="music_panel_channel", guild=vc.guild.id
+    )
     channel_id = int(channel_id_db[0])
     msg_id = int(msg_id_db[0])
-    panel = await utils.fetch_or_get_message(client=vc.client, message_id=msg_id, channel_id=channel_id)
+    panel = await utils.fetch_or_get_message(
+        client=vc.client, message_id=msg_id, channel_id=channel_id
+    )
     if track is None:
         embed = discord.Embed(
             title="Nothing left to play",
@@ -75,10 +79,10 @@ class MusicEvent(commands.Cog):
     async def on_wavelink_node_ready(self, node: wavelink.Node):
         log.debug(f"Node {node.host} loaded with {node.identifier} as identifier")
 
-    @tasks.loop(seconds = 20)
+    @tasks.loop(seconds=20)
     async def update_panel(self):
         for player in self.players:
-            await edit_panel(vc = player)
+            await edit_panel(vc=player)
 
     @update_panel.before_loop
     async def before_panel_update(self):
@@ -90,7 +94,9 @@ class MusicEvent(commands.Cog):
             self.players.append(player)
 
     @commands.Cog.listener("on_wavelink_track_end")
-    async def on_track_end(self, player: wavelink.Player, track: wavelink.Track, reason):
+    async def on_track_end(
+        self, player: wavelink.Player, track: wavelink.Track, reason
+    ):
         try:
             next_track = player.queue.get()
             await player.play(next_track)

@@ -10,7 +10,9 @@ def sec_to_min(time: float):
     return f"{hours}h {minutes}m {str(seconds).zfill(2)}s"
 
 
-async def fetch_or_get_message(client: discord.Bot, message_id: int, channel_id: int) -> discord.Message:
+async def fetch_or_get_message(
+    client: discord.Bot, message_id: int, channel_id: int
+) -> discord.Message:
     message = client.get_message(message_id)
     if message is not None:
         return message
