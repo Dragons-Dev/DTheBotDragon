@@ -3,7 +3,8 @@ import logging
 
 import discord
 from discord.ext import commands, tasks
-from wavelink import NodePool
+import wavelink
+
 
 import config
 from utils import db, logger
@@ -31,19 +32,19 @@ def pre_start_hook():
 class DragonBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.first_start = False
+        self.first_start = True
 
     async def on_ready(self) -> None:
-        log.info(
-            f"Bot started as {self.user.name}#{self.user.discriminator} | {self.user.id}"
-        )
-        await db.set_up()
-        log.debug("Database setup successful")
-        if not self.first_start:
-            await NodePool.create_node(
-                bot=self, host="localhost", port=2333, password="youshallnotpass"
+        if self.first_start:
+            log.info(
+                f"Bot started as {self.user.name}#{self.user.discriminator} | {self.user.id}"
             )
-            self.first_start = True
+            await db.set_up()
+            log.debug("Database setup successful")
+            await wavelink.NodePool.create_node(
+                bot=self, host="127.0.0.1", port=2333, password="youshallnotpass"
+            )
+            self.first_start = False
 
 
 client = DragonBot(

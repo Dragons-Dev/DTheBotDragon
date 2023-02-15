@@ -13,6 +13,15 @@ from utils import db
 log = logging.getLogger("DragonLog")
 
 
+def progress_bar(percent: int) -> str:
+    bar = ""
+
+    for _ in range(round(max(min(percent, 100), 0) / 10)):
+        bar += "🟦"
+
+    return bar.ljust(10, "⬜")
+
+
 async def edit_panel(vc: wavelink.Player):
     track: wavelink.YouTubeTrack = vc.track
     msg_id_db = await db.get_setting(setting="music_panel", guild=vc.guild.id)
@@ -30,11 +39,19 @@ async def edit_panel(vc: wavelink.Player):
             description="Add new tracks by writing their name into this channel!",
             color=discord.Color.blurple(),
         )
+        embed.set_image(
+            url="https://www.incimages.com/uploaded_files/image/1920x1080/getty_626660256_2000108620009280158_388846.jpg"
+        )
         embed.clear_fields()
     else:
         embed = discord.Embed(
             title=f"Now playing {track.title}",
-            description=f"**By: {track.author}\nDuration: {utils.sec_to_min(track.length)}**",
+            description=f"""
+            **
+            By: {track.author}
+            Duration: {utils.sec_to_min(track.length)}
+            Progress:** {progress_bar(int((vc.position/track.duration)*100))}
+            **({utils.sec_to_min(vc.position)}/{utils.sec_to_min(track.duration)})**""",
             color=discord.Color.blurple(),
             timestamp=datetime.datetime.now(),
             url=track.uri,
@@ -49,7 +66,7 @@ async def edit_panel(vc: wavelink.Player):
         total_duration = 0
         for track in duration_upcoming:
             total_duration += track.duration
-        total_duration += track.duration
+        total_duration += track.duration - vc.position
         embed.set_footer(text=f"Total duration: {utils.sec_to_min(total_duration)}")
         i = 0
         for next_track in queue:

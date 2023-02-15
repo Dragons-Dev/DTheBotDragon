@@ -12,7 +12,7 @@ class MusicPanel(commands.Cog):
         self.client = client
 
     @commands.slash_command(
-        name="setup_panel", description="Summon the new music panel to use"
+        name="setup_panel", description="Summon the new wavelink panel to use"
     )
     async def setup_panel(self, ctx: discord.ApplicationContext):
         team_id = await db.get_setting(setting="team role", guild=str(ctx.guild_id))
