@@ -8,3 +8,23 @@
 
 # DTheBotDragon
 Our Multifunctional Bot used on the Dragons discord
+
+## To-Do List
+
+- [ ] General
+  - [ ] Join2Create
+  - [ ] Guildinfo
+  - [ ] Userinfo
+  - [ ] Everything stored in one Database and not in pesky Json
+- [ ] Music
+  - [ ] Play
+  - [ ] Pause/Resume
+  - [ ] Repeat off/one/all
+  - [ ] Volume control
+- [ ] Moderation
+  - [ ] Warn
+  - [ ] Timeout
+  - [ ] Kick
+  - [ ] Ban
+  - [ ] ModLog
+  - [ ] ModMail
