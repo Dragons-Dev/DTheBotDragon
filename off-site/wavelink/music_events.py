@@ -28,6 +28,8 @@ async def edit_panel(vc: wavelink.Player):
     channel_id_db = await db.get_setting(
         setting="music_panel_channel", guild=vc.guild.id
     )
+    if msg_id_db or channel_id_db is None:
+        return
     channel_id = int(channel_id_db[0])
     msg_id = int(msg_id_db[0])
     panel = await utils.fetch_or_get_message(
@@ -51,7 +53,7 @@ async def edit_panel(vc: wavelink.Player):
             By: {track.author}
             Duration: {utils.sec_to_min(track.length)}
             Progress:** {progress_bar(int((vc.position/track.duration)*100))}
-            **({utils.sec_to_min(vc.position)}/{utils.sec_to_min(track.duration)})**""",
+            """,
             color=discord.Color.blurple(),
             timestamp=datetime.datetime.now(),
             url=track.uri,
@@ -96,7 +98,7 @@ class MusicEvent(commands.Cog):
     async def on_wavelink_node_ready(self, node: wavelink.Node):
         log.debug(f"Node {node.host} loaded with {node.identifier} as identifier")
 
-    @tasks.loop(seconds=20)
+    @tasks.loop(seconds=30)
     async def update_panel(self):
         for player in self.players:
             await edit_panel(vc=player)

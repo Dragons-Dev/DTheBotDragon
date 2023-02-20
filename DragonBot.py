@@ -2,6 +2,7 @@ import datetime
 import logging
 
 import discord
+import pomice
 from discord.ext import commands, tasks
 import wavelink
 
@@ -33,6 +34,17 @@ class DragonBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.first_start = True
+        self.pool = pomice.NodePool()
+
+    async def con_nodes(self):
+        await self.wait_until_ready()
+        await self.pool.create_node(
+            bot=self,
+            host="127.0.0.1",
+            port=2333,
+            password="youshallnotpass",
+            identifier="MAIN",
+        )
 
     async def on_ready(self) -> None:
         if self.first_start:
@@ -41,9 +53,10 @@ class DragonBot(commands.Bot):
             )
             await db.set_up()
             log.debug("Database setup successful")
-            await wavelink.NodePool.create_node(
-                bot=self, host="127.0.0.1", port=2333, password="youshallnotpass"
-            )
+            await self.con_nodes()
+            # await wavelink.NodePool.create_node(
+            #    bot=self, host="127.0.0.1", port=2333, password="youshallnotpass"
+            # )
             self.first_start = False
 
 
