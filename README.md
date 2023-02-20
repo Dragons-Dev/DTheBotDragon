@@ -14,17 +14,17 @@ Our Multifunctional Bot used on the Dragons discord
 - [ ] General
   - [ ] Join2Create
   - [ ] Guildinfo
-  - [ ] Userinfo
-  - [ ] Everything stored in one Database and not in pesky Json
+  - [x] Userinfo
+  - [x] Everything stored in one Database and not in pesky Json
 - [ ] Music
   - [ ] Play
   - [ ] Pause/Resume
   - [ ] Repeat off/one/all
   - [ ] Volume control
 - [ ] Moderation
-  - [ ] Warn
-  - [ ] Timeout
-  - [ ] Kick
-  - [ ] Ban
-  - [ ] ModLog
+  - [x] Warn
+  - [x] Timeout
+  - [x] Kick
+  - [x] Ban
+  - [x] ModLog
   - [ ] ModMail
