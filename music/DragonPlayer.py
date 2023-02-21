@@ -1,7 +1,11 @@
+import datetime
+from contextlib import suppress
+
 import pomice
 import discord
 from discord.ext import commands
-from contextlib import suppress
+
+from utils import utils
 
 
 class DragonPlayer(pomice.Player):
@@ -20,6 +24,7 @@ class DragonPlayer(pomice.Player):
         # Queue up the next track, else teardown the player
         try:
             track: pomice.Track = self.queue.get()
+            queue = self.queue.copy()
         except pomice.QueueEmpty:
             return await self.controller.edit(
                 embed=discord.Embed(title="Queue empty", color=discord.Color.blurple())
@@ -27,11 +32,24 @@ class DragonPlayer(pomice.Player):
 
         await self.play(track)
 
-        # Call the controller (a.k.a: The "Now Playing" embed) and check if one exists
+        playing_until = 0
+        dur_queue = queue.copy()
+        while True:
+            try:
+                playing_until += dur_queue.get().length
+            except pomice.QueueEmpty:
+                break
+
+        until = datetime.datetime.now() + datetime.timedelta(milliseconds = playing_until)
+        until = until.strftime("%H:%M")
 
         embed = discord.Embed(
             title=f"Now playing",
-            description=f"[{track.title}]({track.uri})",
+            description=f"""[{track.title}]({track.uri})
+                            Duration: {utils.sec_to_min(track.length/1000)} :hourglass_flowing_sand:
+                            Author: {track.author} :notes:
+                            Playing until: {until} :clock3:
+                        """,
             color=discord.Color.blurple(),
         )
         embed.set_image(url=track.thumbnail)
@@ -39,12 +57,25 @@ class DragonPlayer(pomice.Player):
             text=f"Requested by {track.requester.name}#{track.requester.discriminator}",
             icon_url=track.requester.display_avatar.url,
         )
+
+        now_fields = len(embed.fields)
+        while not now_fields > 4:
+            try:
+                track = queue.get()
+                embed.add_field(
+                    name = f"{now_fields + 1}. in queue",
+                    value = f"[{track.title}]({track.uri})\n-> {track.author} :notes:\n-> {utils.sec_to_min(track.length/1000)}  :hourglass_flowing_sand:",
+                    inline = False,
+                )
+                now_fields += 1
+            except pomice.QueueEmpty:
+                break
         await self.controller.edit(embed=embed)
 
     async def teardown(self):
         """Clear internal states, remove player controller and disconnect."""
-        with suppress((discord.HTTPException), (KeyError)):
-            await self.teardown()
+        with suppress(discord.HTTPException, KeyError):
+            await self.destroy()
             if self.controller:
                 await self.controller.delete()
 

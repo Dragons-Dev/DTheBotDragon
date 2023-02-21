@@ -1,5 +1,6 @@
 import datetime
 import logging
+import json
 
 import discord
 import pomice
@@ -37,14 +38,20 @@ class DragonBot(commands.Bot):
         self.pool = pomice.NodePool()
 
     async def con_nodes(self):
+        with open("lavalinks.json", "r") as f:
+            data: dict = json.load(f)
         await self.wait_until_ready()
-        await self.pool.create_node(
-            bot=self,
-            host="127.0.0.1",
-            port=2333,
-            password="youshallnotpass",
-            identifier="MAIN",
-        )
+        for node, values in data.items():
+            await self.pool.create_node(
+                bot=self,
+                host=values["HOST"],
+                port=values["PORT"],
+                password=values["PASSWORD"],
+                secure = values["SECURE"],
+                identifier=node,
+                spotify_client_id = (None if values["SPOTIFY_ID"] == "" else values["SPOTIFY_ID"]),
+                spotify_client_secret = (None if values["SPOTIFY_SECRET"] == "" else values["SPOTIFY_SECRET"])
+            )
 
     async def on_ready(self) -> None:
         if self.first_start:

@@ -6,7 +6,7 @@ from discord.ext import commands
 
 from DragonBot import DragonBot
 from music.DragonPlayer import DragonPlayer
-from utils import db
+from utils import db, utils
 
 
 class PlayerCog(commands.Cog):
@@ -29,29 +29,28 @@ class PlayerCog(commands.Cog):
         await ctx.send(f"Joined the voice channel `{channel}`")
 
     @commands.command(name="play")
-    async def play(self, ctx, *, search: str) -> None:
+    async def play(self, ctx: commands.Context, *, search: str) -> None:
         if not ctx.voice_client:
             await ctx.invoke(self.join)
 
         player: DragonPlayer = ctx.voice_client
         await player.set_context(ctx)
-        results = await player.get_tracks(query=f"{search}")
-
-        msg = await ctx.send(f"Searching for {search}...")
-        player.controller = msg
+        msg = await ctx.send(embed = discord.Embed(title = f"Searching for {search}...", color = discord.Color.blurple()))
+        results = await player.get_tracks(query=f"{search}", ctx = ctx)
+        if player.controller is None:
+            player.controller = msg
+        else:
+            await msg.delete(delay = 5)
 
         if not results:
             raise commands.CommandError("No results were found for that search term.")
 
         if isinstance(results, pomice.Playlist):
-            for track in results.tracks:
-                track.requester = ctx.author
-                player.queue.put(track)
+            player.queue.extend(results.tracks)
             if not player.is_playing:
                 await player.do_next()
         else:
             track = results[0]
-            track.requester = ctx.author
             player.queue.put(track)
             if not player.is_playing:
                 await player.do_next()
