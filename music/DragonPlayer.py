@@ -40,7 +40,7 @@ class DragonPlayer(pomice.Player):
             except pomice.QueueEmpty:
                 break
 
-        until = datetime.datetime.now() + datetime.timedelta(milliseconds = playing_until)
+        until = datetime.datetime.now() + datetime.timedelta(milliseconds=playing_until)
         until = until.strftime("%H:%M")
 
         embed = discord.Embed(
@@ -63,9 +63,9 @@ class DragonPlayer(pomice.Player):
             try:
                 track = queue.get()
                 embed.add_field(
-                    name = f"{now_fields + 1}. in queue",
-                    value = f"[{track.title}]({track.uri})\n-> {track.author} :notes:\n-> {utils.sec_to_min(track.length/1000)}  :hourglass_flowing_sand:",
-                    inline = False,
+                    name=f"{now_fields + 1}. in queue",
+                    value=f"[{track.title}]({track.uri})\n-> {track.author} :notes:\n-> {utils.sec_to_min(track.length/1000)}  :hourglass_flowing_sand:",
+                    inline=False,
                 )
                 now_fields += 1
             except pomice.QueueEmpty:

@@ -24,7 +24,9 @@ class PomiceEventCog(commands.Cog):
         await player.do_next()
 
     @commands.Cog.listener()
-    async def on_pomice_track_exception(self, player: DragonPlayer, error_code, exception):
+    async def on_pomice_track_exception(
+        self, player: DragonPlayer, error_code, exception
+    ):
         print(f"track_exception: {player.guild.name}: {error_code} ({exception})")
 
     @commands.Cog.listener()

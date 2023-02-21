@@ -47,10 +47,14 @@ class DragonBot(commands.Bot):
                 host=values["HOST"],
                 port=values["PORT"],
                 password=values["PASSWORD"],
-                secure = values["SECURE"],
+                secure=values["SECURE"],
                 identifier=node,
-                spotify_client_id = (None if values["SPOTIFY_ID"] == "" else values["SPOTIFY_ID"]),
-                spotify_client_secret = (None if values["SPOTIFY_SECRET"] == "" else values["SPOTIFY_SECRET"])
+                spotify_client_id=(
+                    None if values["SPOTIFY_ID"] == "" else values["SPOTIFY_ID"]
+                ),
+                spotify_client_secret=(
+                    None if values["SPOTIFY_SECRET"] == "" else values["SPOTIFY_SECRET"]
+                ),
             )
 
     async def on_ready(self) -> None:

@@ -35,12 +35,16 @@ class PlayerCog(commands.Cog):
 
         player: DragonPlayer = ctx.voice_client
         await player.set_context(ctx)
-        msg = await ctx.send(embed = discord.Embed(title = f"Searching for {search}...", color = discord.Color.blurple()))
-        results = await player.get_tracks(query=f"{search}", ctx = ctx)
+        msg = await ctx.send(
+            embed=discord.Embed(
+                title=f"Searching for {search}...", color=discord.Color.blurple()
+            )
+        )
+        results = await player.get_tracks(query=f"{search}", ctx=ctx)
         if player.controller is None:
             player.controller = msg
         else:
-            await msg.delete(delay = 5)
+            await msg.delete(delay=5)
 
         if not results:
             raise commands.CommandError("No results were found for that search term.")
