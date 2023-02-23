@@ -24,7 +24,6 @@ class DragonPlayer(pomice.Player):
         # Queue up the next track, else teardown the player
         try:
             track: pomice.Track = self.queue.get()
-            queue = self.queue.copy()
         except pomice.QueueEmpty:
             return await self.controller.edit(
                 embed=discord.Embed(title="Queue empty", color=discord.Color.blurple())
@@ -32,14 +31,14 @@ class DragonPlayer(pomice.Player):
 
         await self.play(track)
 
+    async def update_embed(self) -> None:
+        queue: list[pomice.Track] = self.queue.get_queue()
+        pos = 0
+        track: pomice.Track = self.current if self.current is not None else queue[0]
         playing_until = 0
-        dur_queue = queue.copy()
-        while True:
-            try:
-                playing_until += dur_queue.get().length
-            except pomice.QueueEmpty:
-                break
-
+        playing_until += self.current.length if self.current is not None else 0
+        for t in queue:
+            playing_until += t.length
         until = datetime.datetime.now() + datetime.timedelta(milliseconds=playing_until)
         until = until.strftime("%H:%M")
 
@@ -58,19 +57,25 @@ class DragonPlayer(pomice.Player):
             icon_url=track.requester.display_avatar.url,
         )
 
-        now_fields = len(embed.fields)
-        while not now_fields > 4:
+        for i in range(5):
+            now_fields = len(embed.fields)
+            if now_fields > 4:
+                break
             try:
-                track = queue.get()
+                track = queue[i + 1]
                 embed.add_field(
                     name=f"{now_fields + 1}. in queue",
                     value=f"[{track.title}]({track.uri})\n-> {track.author} :notes:\n-> {utils.sec_to_min(track.length/1000)}  :hourglass_flowing_sand:",
                     inline=False,
                 )
-                now_fields += 1
-            except pomice.QueueEmpty:
+            except IndexError:
                 break
         await self.controller.edit(embed=embed)
+
+    async def set_context(self, ctx: commands.Context):
+        """Set context for the player"""
+        self.context = ctx
+        self.dj = ctx.author
 
     async def teardown(self):
         """Clear internal states, remove player controller and disconnect."""
@@ -78,8 +83,3 @@ class DragonPlayer(pomice.Player):
             await self.destroy()
             if self.controller:
                 await self.controller.delete()
-
-    async def set_context(self, ctx: commands.Context):
-        """Set context for the player"""
-        self.context = ctx
-        self.dj = ctx.author

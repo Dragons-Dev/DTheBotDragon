@@ -5,7 +5,6 @@ import json
 import discord
 import pomice
 from discord.ext import commands, tasks
-import wavelink
 
 
 import config
@@ -56,6 +55,9 @@ class DragonBot(commands.Bot):
                     None if values["SPOTIFY_SECRET"] == "" else values["SPOTIFY_SECRET"]
                 ),
             )
+            log.info(
+                f"Lavalink {node} connected on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
+            )
 
     async def on_ready(self) -> None:
         if self.first_start:
@@ -65,9 +67,6 @@ class DragonBot(commands.Bot):
             await db.set_up()
             log.debug("Database setup successful")
             await self.con_nodes()
-            # await wavelink.NodePool.create_node(
-            #    bot=self, host="127.0.0.1", port=2333, password="youshallnotpass"
-            # )
             self.first_start = False
 
 

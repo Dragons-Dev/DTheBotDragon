@@ -1,0 +1,10 @@
+{
+  "MAIN": {
+    "HOST": "127.0.0.1",
+    "PORT": 2333,
+    "PASSWORD": "youshallnotpass",
+    "SECURE": false,
+    "SPOTIFY_ID": "7ff20acde3574872a44b261479509cff",
+    "SPOTIFY_SECRET": "a1d979c12f4344bf97599901857002f5"
+  }
+}

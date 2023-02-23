@@ -15,7 +15,7 @@ class PomiceEventCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player: DragonPlayer, track: pomice.Track):
-        pass
+        await player.update_embed()
 
     @commands.Cog.listener()
     async def on_pomice_track_end(
