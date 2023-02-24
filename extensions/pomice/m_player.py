@@ -37,11 +37,13 @@ class PlayerCog(commands.Cog):
             responded = True
 
         player: DragonPlayer = ctx.voice_client
-        await self.client.ws.voice_state(
-            guild_id=ctx.guild_id,
-            channel_id=ctx.voice_client.channel.id,
-            self_deaf=True,
-        )
+
+        if player.controller is None:
+            await self.client.ws.voice_state(
+                guild_id=ctx.guild_id,
+                channel_id=ctx.voice_client.channel.id,
+                self_deaf=True,
+            )
 
         await player.set_context(ctx)
         search_em = discord.Embed(
