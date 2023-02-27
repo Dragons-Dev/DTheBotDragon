@@ -15,7 +15,33 @@ class PomiceEventCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player: DragonPlayer, track: pomice.Track):
-        await player.update_embed()
+        loop_mode = player.queue.loop_mode
+        upcoming = []
+
+        if loop_mode is pomice.LoopMode.TRACK:
+            upcoming.append(track)
+
+        elif loop_mode is pomice.LoopMode.QUEUE:
+            queue = player.queue.get_queue()
+            current = player.queue.find_position(track)
+            for t in queue:
+                walker = player.queue.find_position(t)
+                if walker < current:
+                    pass
+                else:
+                    upcoming.append(t)
+            if len(upcoming) < 5:
+                for missing in range(5-len(upcoming)):
+                    upcoming.append(queue[missing])
+
+        else:
+            queue = player.queue.get_queue()
+            for i in range(5):
+                try:
+                    upcoming.append(queue[i])
+                except IndexError:
+                    break
+        await player.update_embed(upcoming_tracks = (upcoming if upcoming is not False else None))
 
     @commands.Cog.listener()
     async def on_pomice_track_end(

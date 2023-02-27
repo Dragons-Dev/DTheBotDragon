@@ -26,7 +26,7 @@ class SkipCog(commands.Cog):
             or ctx.author.voice.channel != ctx.voice_client.channel
         ):
             return await ctx.response.send_message(
-                f"You may not skip a song when you are not in the channel.",
+                f"You may not skip a song when you are not in the same channel.",
                 ephemeral=True,
                 delete_after=10,
             )

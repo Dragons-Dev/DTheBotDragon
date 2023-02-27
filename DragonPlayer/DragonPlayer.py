@@ -8,6 +8,13 @@ from discord.ext import commands
 from utils import utils
 
 
+loop_emoji = {
+    "Off": ":arrow_right:",
+    "Track": ":repeat_one:",
+    "Queue": ":repeat:"
+}
+
+
 class DragonPlayer(pomice.Player):
     """Custom pomice Player class."""
 
@@ -31,8 +38,10 @@ class DragonPlayer(pomice.Player):
 
         await self.play(track)
 
-    async def update_embed(self) -> None:
+    async def update_embed(self, upcoming_tracks: list[pomice.Track] = None) -> None:
         queue: list[pomice.Track] = self.queue.get_queue()
+        with open("output.txt", "w") as output:
+            output.write("\n".join([f'{track.title} | {track.author}' for track in queue]))
         track: pomice.Track = self.current if self.current is not None else queue[0]
         playing_until = 0
         playing_until += self.current.length if self.current is not None else 0
@@ -41,12 +50,21 @@ class DragonPlayer(pomice.Player):
         until = datetime.datetime.now() + datetime.timedelta(milliseconds=playing_until)
         until = until.strftime("%H:%M")
 
+        loop_mode = self.queue.loop_mode
+        if loop_mode is pomice.LoopMode.TRACK:
+            loop_mode = "Track"
+        elif loop_mode is pomice.LoopMode.QUEUE:
+            loop_mode = "Queue"
+        else:
+            loop_mode = "Off"
+
         embed = discord.Embed(
             title=f"Now playing",
             description=f"""[{track.title}]({track.uri})
                             Duration: {utils.sec_to_min(track.length/1000)} :hourglass_flowing_sand:
                             Author: {track.author} :notes:
                             Playing until: {until} :clock3:
+                            Loop: {loop_mode} {loop_emoji[loop_mode]}
                         """,
             color=discord.Color.blurple(),
         )
@@ -56,19 +74,34 @@ class DragonPlayer(pomice.Player):
             icon_url=track.requester.display_avatar.url,
         )
 
-        for i in range(5):
-            now_fields = len(embed.fields)
-            if now_fields > 4:
-                break
-            try:
-                track = queue[i]
-                embed.add_field(
-                    name=f"{now_fields + 1}. in queue",
-                    value=f"[{track.title}]({track.uri})\n-> {track.author} :notes:\n-> {utils.sec_to_min(track.length/1000)}  :hourglass_flowing_sand:",
-                    inline=False,
-                )
-            except IndexError:
-                break
+        if upcoming_tracks is None:
+            for i in range(5):
+                now_fields = len(embed.fields)
+                if now_fields > 4:
+                    break
+                try:
+                    track = queue[i]
+                    embed.add_field(
+                        name=f"{now_fields + 1}. in queue",
+                        value=f"[{track.title}]({track.uri})\n-> {track.author} :notes:\n-> {utils.sec_to_min(track.length/1000)}  :hourglass_flowing_sand:",
+                        inline=False,
+                    )
+                except IndexError:
+                    break
+        else:
+            for i in range(5):
+                now_fields = len(embed.fields)
+                if now_fields > 4:
+                    break
+                try:
+                    track = upcoming_tracks[i]
+                    embed.add_field(
+                        name = f"{now_fields + 1}. in queue",
+                        value = f"[{track.title}]({track.uri})\n-> {track.author} :notes:\n-> {utils.sec_to_min(track.length / 1000)}  :hourglass_flowing_sand:",
+                        inline = False,
+                    )
+                except IndexError:
+                    break
         await self.controller.edit(embed=embed)
 
     async def set_context(self, ctx: commands.Context):

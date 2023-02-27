@@ -34,15 +34,22 @@ class PlayerCog(commands.Cog):
             await ctx.response.send_message(
                 f"Joined the voice channel `{channel}`", delete_after=10
             )
-            responded = True
-
-        player: DragonPlayer = ctx.voice_client
-
-        if player.controller is None:
             await self.client.ws.voice_state(
                 guild_id=ctx.guild_id,
                 channel_id=ctx.voice_client.channel.id,
                 self_deaf=True,
+            )
+            responded = True
+
+        player: DragonPlayer = ctx.voice_client
+        if (
+            ctx.author.voice is None
+            or ctx.author.voice.channel != ctx.voice_client.channel
+        ):
+            return await ctx.response.send_message(
+                f"You may not add a song when you are not in the same channel.",
+                ephemeral=True,
+                delete_after=10,
             )
 
         await player.set_context(ctx)
