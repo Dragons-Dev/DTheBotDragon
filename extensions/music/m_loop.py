@@ -16,15 +16,21 @@ class LoopCog(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.slash_command(name = "loop", description = "Sets a loop for the current queue")
-    async def loop_cmd(self, ctx: discord.ApplicationContext, loop_mode: discord.Option(
-        str,
-        choices = [
-            discord.OptionChoice("Off"),
-            discord.OptionChoice("Track"),
-            discord.OptionChoice("Queue")
-        ]
-    )):
+    @commands.slash_command(
+        name="loop", description="Sets a loop for the current queue"
+    )
+    async def loop_cmd(
+        self,
+        ctx: discord.ApplicationContext,
+        loop_mode: discord.Option(
+            str,
+            choices=[
+                discord.OptionChoice("Off"),
+                discord.OptionChoice("Track"),
+                discord.OptionChoice("Queue"),
+            ],
+        ),
+    ):
         if not ctx.voice_client:
             return await ctx.response.send_message(
                 "You can't set a loop when I am not playing a song!",

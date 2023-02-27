@@ -31,7 +31,7 @@ class PomiceEventCog(commands.Cog):
                 else:
                     upcoming.append(t)
             if len(upcoming) < 5:
-                for missing in range(5-len(upcoming)):
+                for missing in range(5 - len(upcoming)):
                     upcoming.append(queue[missing])
 
         else:
@@ -41,7 +41,9 @@ class PomiceEventCog(commands.Cog):
                     upcoming.append(queue[i])
                 except IndexError:
                     break
-        await player.update_embed(upcoming_tracks = (upcoming if upcoming is not False else None))
+        await player.update_embed(
+            upcoming_tracks=(upcoming if upcoming is not False else None)
+        )
 
     @commands.Cog.listener()
     async def on_pomice_track_end(
