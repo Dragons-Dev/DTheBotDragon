@@ -61,7 +61,7 @@ class DragonPlayer(pomice.Player):
             description=f"""[{track.title}]({track.uri})
                             Duration: {utils.sec_to_min(track.length/1000)} :hourglass_flowing_sand:
                             Author: {track.author} :notes:
-                            Playing until: {until} :clock3:
+                            Playing until: {until if loop_mode == "Off" else "To infinity :infinity:"} :clock3:
                             Loop: {loop_mode} {loop_emoji[loop_mode]}
                         """,
             color=discord.Color.blurple(),

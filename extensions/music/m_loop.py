@@ -3,6 +3,7 @@ import logging
 import discord
 import pomice
 from discord.ext import commands
+from pycord import multicog
 
 from DragonPlayer.DragonPlayer import DragonPlayer
 from DragonBot import DragonBot
@@ -16,6 +17,7 @@ class LoopCog(commands.Cog):
     def __init__(self, client):
         self.client = client
 
+    @multicog.add_to_group("music")
     @commands.slash_command(
         name="loop", description="Sets a loop for the current queue"
     )

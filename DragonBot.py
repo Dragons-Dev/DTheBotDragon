@@ -5,6 +5,7 @@ import json
 import discord
 import pomice
 from discord.ext import commands, tasks
+from pycord import multicog
 
 
 import config
@@ -28,6 +29,7 @@ ascii_art = """
 def pre_start_hook():
     print(ascii_art)
     client.load_extensions("extensions", recursive=True)
+    multicog.apply_multicog(client)
 
 
 class DragonBot(commands.Bot):

@@ -2,6 +2,7 @@ import logging
 
 import discord
 from discord.ext import commands
+from pycord import multicog
 
 from DragonPlayer.DragonPlayer import DragonPlayer
 from DragonBot import DragonBot
@@ -10,8 +11,9 @@ from utils import db
 
 class SkipCog(commands.Cog):
     def __init__(self, client):
-        self.client = client
+        self.client: DragonBot = client
 
+    @multicog.add_to_group("music")
     @commands.slash_command(name="skip", description="Skip the currently playing song")
     async def skip_cmd(self, ctx: discord.ApplicationContext):
         if not ctx.voice_client:

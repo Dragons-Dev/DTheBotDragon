@@ -3,6 +3,7 @@ import logging
 import pomice
 import discord
 from discord.ext import commands
+from pycord import multicog
 
 from DragonPlayer.DragonPlayer import DragonPlayer
 from DragonBot import DragonBot
@@ -13,6 +14,7 @@ class ShuffleCog(commands.Cog):
     def __init__(self, client):
         self.client = client
 
+    @multicog.add_to_group("music")
     @commands.slash_command(name="shuffle", description="Shuffle the queue")
     async def shuffle(self, ctx: discord.ApplicationContext) -> None:
         if not ctx.voice_client:
