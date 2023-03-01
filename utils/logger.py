@@ -23,8 +23,6 @@ FORMATS = {
 
 log = logging.getLogger("DragonLog")
 log.setLevel(logging.DEBUG)
-mafic_log = logging.getLogger("mafic")
-mafic_log.setLevel(logging.DEBUG)
 discord_log = logging.getLogger("discord")
 discord_log.setLevel(logging.WARN)
 
@@ -53,7 +51,5 @@ console_handler.setFormatter(CustomFormatter())
 
 log.addHandler(file_handler)
 log.addHandler(console_handler)
-mafic_log.addHandler(file_handler)
-mafic_log.addHandler(console_handler)
 discord_log.addHandler(file_handler)
 discord_log.addHandler(console_handler)
