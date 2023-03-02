@@ -32,7 +32,7 @@ class DeleteCog(commands.Cog):
     @commands.slash_command(
         name="remove_track", description="Remove a track from the queue"
     )
-    async def shuffle(
+    async def rm_track(
         self,
         ctx: discord.ApplicationContext,
         track: discord.Option(
