@@ -25,16 +25,33 @@ class SettingsCog(commands.Cog):
         ),
         value: discord.Option(required=True),
     ):
-        await db.insert_setting(setting=setting, value=value, guild=ctx.guild_id)
-        embed = discord.Embed(title="Success", color=discord.Color.brand_green())
+        for role in ctx.author.roles:
+            role: discord.Role = role
+            if role.permissions.administrator:
+                await db.insert_setting(
+                    setting=setting, value=value, guild=ctx.guild_id
+                )
+                embed = discord.Embed(
+                    title="Success", color=discord.Color.brand_green()
+                )
 
-        match setting:
-            case "Team Role":
-                embed.description = f"Successfully set {setting} to <@&{value}>"
-            case "Mod Log Channel":
-                embed.description = f"Successfully set {setting} to <#{value}>"
+                match setting:
+                    case "Team Role":
+                        embed.description = f"Successfully set {setting} to <@&{value}>"
+                    case "Mod Log Channel":
+                        embed.description = f"Successfully set {setting} to <#{value}>"
 
-        await ctx.response.send_message(embed=embed, ephemeral=True)
+                await ctx.response.send_message(embed=embed, ephemeral=True)
+                break
+        else:
+            await ctx.response.send_message(
+                embed=discord.Embed(
+                    title="Error",
+                    description="You are not allowed to set this setting!",
+                    color=discord.Color.brand_red(),
+                ),
+                ephemeral=True,
+            )
 
 
 def setup(client: DragonBot):

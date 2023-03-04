@@ -102,7 +102,6 @@ async def get_mod_action(
     moderator: int = None,
     action: str = None,
 ) -> tuple | list[tuple] | None:
-
     if id is not None:
         async with aiosqlite.connect(DBPATH) as conn:
             async with conn.cursor() as cursor:
