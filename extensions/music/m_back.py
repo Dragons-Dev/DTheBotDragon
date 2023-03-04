@@ -40,11 +40,10 @@ class TrackBackCog(commands.Cog):
             )
 
         current = player.current
-        track = player.queue.history[:-1]
-        player.queue.history.pop(-1)
-        player.queue.put(track)
-        await player.do_next()
-        player.queue.put(current)
+        track = (player.queue.history.pop(-1) if player.queue.last_track is None else player.queue.history.pop(-2))
+        player.queue.put_at_front(current)
+        player.queue.put_at_front(track)
+        await player.stop()
 
         await ctx.response.send_message(
             f"You went back to {track}", ephemeral = True, delete_after = 10
@@ -57,7 +56,6 @@ class TrackBackCog(commands.Cog):
             ),
             delete_after = 10,
         )
-# TODO: Check if Track fails
 
 
 def setup(client: DragonBot):

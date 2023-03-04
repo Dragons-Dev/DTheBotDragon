@@ -50,6 +50,9 @@ class PomiceEventCog(commands.Cog):
         self, player: DragonPlayer, track: pomice.Track, reason: str
     ):
         await player.do_next()
+        player.queue.history.append(track)
+        if len(player.queue.history) > 10:
+            player.queue.history.pop(0)
 
     @commands.Cog.listener()
     async def on_pomice_track_exception(

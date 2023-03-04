@@ -5,6 +5,7 @@ import pomice
 import discord
 from discord.ext import commands
 
+from DragonPlayer.DragonQueue import DragonQueue
 from utils import utils
 
 
@@ -17,7 +18,7 @@ class DragonPlayer(pomice.Player):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.queue = pomice.Queue()
+        self.queue = DragonQueue()
         self.controller: discord.Message = None
         # Set context here, so we can send a now playing embed
         self.context: commands.Context = None
