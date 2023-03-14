@@ -21,7 +21,7 @@ jobs:
 
     # This is optional
     - name: Security check report artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: Security report
         path: output/security_report.txt
