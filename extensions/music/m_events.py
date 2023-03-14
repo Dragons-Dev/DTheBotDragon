@@ -67,7 +67,9 @@ class PomiceEventCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_pomice_track_stuck(self, player: DragonPlayer, track: pomice.Track):
-        await player.controller.channel.send(f"Track got stuck {track.title}\nto put it back in queue use /play {track.title}")
+        await player.controller.channel.send(
+            f"Track got stuck {track.title}\nto put it back in queue use /play {track.title}"
+        )
 
 
 def setup(client: DragonBot):

@@ -195,7 +195,7 @@ async def _add_bank_acc(member: int):
                 """
             INSERT INTO economy (member, euro, usd, gold, rolex) VALUES (?, ?, ?, ?, ?)
             """,
-                (member, 100, 50, 0, 0)
+                (member, 100, 50, 0, 0),
             )
         await conn.commit()
 
@@ -207,7 +207,7 @@ async def get_bank_acc(member: int) -> tuple:
                 """
                 SELECT euro, usd, gold, rolex FROM economy WHERE member = ?
                 """,
-                (member,)
+                (member,),
             )
             response = await cursor.fetchone()
             if response is None:
