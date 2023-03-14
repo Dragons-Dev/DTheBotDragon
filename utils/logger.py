@@ -25,6 +25,8 @@ log = logging.getLogger("DragonLog")
 log.setLevel(logging.DEBUG)
 discord_log = logging.getLogger("discord")
 discord_log.setLevel(logging.WARN)
+pomice_log = logging.getLogger("pomice")
+discord_log.setLevel(logging.WARN)
 
 if not Path("logs").exists():
     os.mkdir("logs")

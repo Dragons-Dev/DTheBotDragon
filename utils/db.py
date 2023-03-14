@@ -34,10 +34,21 @@ async def set_up() -> None:
             """
             )
 
+            await cursor.execute(
+                """
+            CREATE TABLE IF NOT EXISTS economy (
+            member INTEGER PRIMARY KEY, 
+            euro INTEGER, 
+            usd INTEGER, 
+            gold INTEGER, 
+            rolex INTEGER)
+            """
+            )
+
         await conn.commit()
 
 
-async def insert_setting(setting: str, value: str, guild: int):
+async def insert_setting(setting: str, value: str, guild: int) -> None:
     setting = setting.lower()
     value = value.lower()
     async with aiosqlite.connect(DBPATH) as conn:
@@ -66,7 +77,7 @@ async def insert_setting(setting: str, value: str, guild: int):
         await conn.commit()
 
 
-async def get_setting(setting: str, guild: int) -> str | None:
+async def get_setting(setting: str, guild: int) -> tuple | None:
     setting = setting.lower()
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
@@ -157,7 +168,7 @@ async def get_mod_action(
                 )
                 response = await cursor.fetchall()
                 if response is None:
-                    return 0
+                    return None
                 else:
                     return response
 
@@ -175,3 +186,32 @@ async def get_mod_action(
                     return None
                 else:
                     return response
+
+
+async def _add_bank_acc(member: int):
+    async with aiosqlite.connect(DBPATH) as conn:
+        async with conn.cursor() as cursor:
+            await cursor.execute(
+                """
+            INSERT INTO economy (member, euro, usd, gold, rolex) VALUES (?, ?, ?, ?, ?)
+            """,
+                (member, 100, 50, 0, 0),
+            )
+        await conn.commit()
+
+
+async def get_bank_acc(member: int) -> tuple:
+    async with aiosqlite.connect(DBPATH) as conn:
+        async with conn.cursor() as cursor:
+            await cursor.execute(
+                """
+                SELECT euro, usd, gold, rolex FROM economy WHERE member = ?
+                """,
+                (member,),
+            )
+            response = await cursor.fetchone()
+            if response is None:
+                await _add_bank_acc(member)
+                return tuple([100, 50, 0, 0])
+            else:
+                return response
