@@ -1,10 +1,9 @@
-import datetime
 import logging
 import json
 
 import discord
 import pomice
-from discord.ext import commands, tasks
+from discord.ext import commands
 from pycord import multicog
 
 
@@ -14,7 +13,8 @@ from utils import db, logger
 log = logging.getLogger("DragonLog")
 
 
-ascii_art = """
+def pre_start_hook():
+    print("""
 ╭━━━╮╱╱╱╱╱╱╱╱╱╱╱╱╱╭━━╮╱╱╱╭╮
 ╰╮╭╮┃╱╱╱╱╱╱╱╱╱╱╱╱╱┃╭╮┃╱╱╭╯╰╮
 ╱┃┃┃┣━┳━━┳━━┳━━┳━╮┃╰╯╰┳━┻╮╭╯
@@ -23,11 +23,7 @@ ascii_art = """
 ╰━━━┻╯╰╯╰┻━╮┣━━┻╯╰┻━━━┻━━┻━╯
 ╱╱╱╱╱╱╱╱╱╭━╯┃
 ╱╱╱╱╱╱╱╱╱╰━━╯
-"""
-
-
-def pre_start_hook():
-    print(ascii_art)
+""")
     client.load_extensions("extensions", recursive=True)
     multicog.apply_multicog(client)
 
@@ -43,23 +39,36 @@ class DragonBot(commands.Bot):
             data: dict = json.load(f)
         await self.wait_until_ready()
         for node, values in data.items():
-            await self.pool.create_node(
-                bot=self,
-                host=values["HOST"],
-                port=values["PORT"],
-                password=values["PASSWORD"],
-                secure=values["SECURE"],
-                identifier=node,
-                spotify_client_id=(
-                    None if values["SPOTIFY_ID"] == "" else values["SPOTIFY_ID"]
-                ),
-                spotify_client_secret=(
-                    None if values["SPOTIFY_SECRET"] == "" else values["SPOTIFY_SECRET"]
-                ),
-            )
-            log.info(
-                f"Lavalink {node} connected on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
-            )
+            try:
+                await self.pool.create_node(
+                    bot=self,
+                    host=values["HOST"],
+                    port=values["PORT"],
+                    password=values["PASSWORD"],
+                    secure=values["SECURE"],
+                    identifier=node,
+                    spotify_client_id=(
+                        None if values["SPOTIFY_ID"] == "" else values["SPOTIFY_ID"]
+                    ),
+                    spotify_client_secret=(
+                        None if values["SPOTIFY_SECRET"] == "" else values["SPOTIFY_SECRET"]
+                    ),
+                )
+                log.info(
+                    f"Lavalink {node} connected on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
+                )
+            except pomice.NodeConnectionFailure:
+                log.warning(
+                    f"Node didn't respond: Lavalink {node} didn't connect on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
+                )
+            except pomice.LavalinkVersionIncompatible:
+                log.error(
+                    f"Incompatible Lavalink Version:  {node} didn't connect on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
+                )
+            except ValueError as e:
+                log.warning(
+                    f"ValueError: Lavalink {node} didn't connect on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}\n{e}"
+                )
 
     async def on_ready(self) -> None:
         if self.first_start:

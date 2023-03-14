@@ -21,6 +21,7 @@ class SettingsCog(commands.Cog):
             choices=[
                 discord.OptionChoice("Team Role"),
                 discord.OptionChoice("Mod Log Channel"),
+                discord.OptionChoice("Modmail Channel"),
             ],
         ),
         value: discord.Option(required=True),
@@ -34,11 +35,12 @@ class SettingsCog(commands.Cog):
                 embed = discord.Embed(
                     title="Success", color=discord.Color.brand_green()
                 )
-
                 match setting:
                     case "Team Role":
                         embed.description = f"Successfully set {setting} to <@&{value}>"
                     case "Mod Log Channel":
+                        embed.description = f"Successfully set {setting} to <#{value}>"
+                    case "Modmail Channel":
                         embed.description = f"Successfully set {setting} to <#{value}>"
 
                 await ctx.response.send_message(embed=embed, ephemeral=True)

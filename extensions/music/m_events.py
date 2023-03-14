@@ -9,6 +9,9 @@ from DragonPlayer.DragonPlayer import DragonPlayer
 from utils import db, utils
 
 
+log = logging.getLogger("DragonLog")
+
+
 class PomiceEventCog(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -58,11 +61,13 @@ class PomiceEventCog(commands.Cog):
     async def on_pomice_track_exception(
         self, player: DragonPlayer, error_code, exception
     ):
-        print(f"track_exception: {player.guild.name}: {error_code} ({exception})")
+        log.error(f"Pomice exception: {player.guild.name}: {error_code} | {exception} ")
+        await player.controller.channel.send(f"Track errored skipping...")
+        await player.do_next()
 
     @commands.Cog.listener()
     async def on_pomice_track_stuck(self, player: DragonPlayer, track: pomice.Track):
-        print(f"track_stuck: {player.guild.name}: {track.title}")
+        await player.controller.channel.send(f"Track got stuck {track.title}\nto put it back in queue use /play {track.title}")
 
 
 def setup(client: DragonBot):
