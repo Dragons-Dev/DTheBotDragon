@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Check files using the black formatter
-        uses: datadog/action-py-black-formatter@v2.1
+        uses: datadog/action-py-black-formatter@v2.5
         id: action_black
       - name: Create Pull Request
         if: steps.action_black.outputs.is_formatted == 'true'
