@@ -48,7 +48,7 @@ async def set_up() -> None:
         await conn.commit()
 
 
-async def insert_setting(setting: str, value: str, guild: int):
+async def insert_setting(setting: str, value: str, guild: int) -> None:
     setting = setting.lower()
     value = value.lower()
     async with aiosqlite.connect(DBPATH) as conn:
@@ -77,7 +77,7 @@ async def insert_setting(setting: str, value: str, guild: int):
         await conn.commit()
 
 
-async def get_setting(setting: str, guild: int) -> str | None:
+async def get_setting(setting: str, guild: int) -> tuple | None:
     setting = setting.lower()
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
