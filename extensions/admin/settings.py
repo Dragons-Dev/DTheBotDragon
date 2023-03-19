@@ -22,7 +22,9 @@ class SettingsCog(commands.Cog):
                 discord.OptionChoice("Team Role"),
                 discord.OptionChoice("Mod Log Channel"),
                 discord.OptionChoice("Modmail Channel"),
-                discord.OptionChoice("Verification Channel"),   # TODO: Check if category channel
+                discord.OptionChoice(
+                    "Verification Channel"
+                ),  # TODO: Check if category channel
             ],
         ),
         value: discord.Option(required=True),

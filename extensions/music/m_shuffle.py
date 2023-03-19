@@ -10,7 +10,7 @@ from DragonBot import DragonBot
 from utils import db
 
 
-class ShuffleCog(commands.Cog):
+class MusicShuffleCog(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -50,4 +50,4 @@ class ShuffleCog(commands.Cog):
 
 
 def setup(client: DragonBot):
-    client.add_cog(ShuffleCog(client))
+    client.add_cog(MusicShuffleCog(client))

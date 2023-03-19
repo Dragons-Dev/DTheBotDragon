@@ -9,7 +9,7 @@ from DragonBot import DragonBot
 from utils import db
 
 
-class SkipCog(commands.Cog):
+class MusicSkipCog(commands.Cog):
     def __init__(self, client):
         self.client: DragonBot = client
 
@@ -48,4 +48,4 @@ class SkipCog(commands.Cog):
 
 
 def setup(client: DragonBot):
-    client.add_cog(SkipCog(client))
+    client.add_cog(MusicSkipCog(client))

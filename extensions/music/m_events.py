@@ -12,9 +12,27 @@ from utils import db, utils
 log = logging.getLogger("DragonLog")
 
 
-class PomiceEventCog(commands.Cog):
+class MusicEventCog(commands.Cog):
     def __init__(self, client):
-        self.client = client
+        self.client: DragonBot = client
+
+    @commands.Cog.listener()
+    async def on_voice_state_update(
+        self,
+        member: discord.Member,
+        before: discord.VoiceState,
+        after: discord.VoiceState,
+    ):
+        if member != self.client.user:
+            return
+        if member == self.client.user:
+            if after is None:
+                vc: DragonPlayer = member.guild.voice_client
+                await vc.teardown()
+                print("teared_down")
+            else:
+                guild = member.guild
+                guild.voice_client.channel = after.channel
 
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player: DragonPlayer, track: pomice.Track):
@@ -73,4 +91,4 @@ class PomiceEventCog(commands.Cog):
 
 
 def setup(client: DragonBot):
-    client.add_cog(PomiceEventCog(client))
+    client.add_cog(MusicEventCog(client))
