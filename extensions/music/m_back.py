@@ -10,7 +10,7 @@ from DragonBot import DragonBot
 from utils import db
 
 
-class TrackBackCog(commands.Cog):
+class MusicTrackBackCog(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -63,4 +63,4 @@ class TrackBackCog(commands.Cog):
 
 
 def setup(client: DragonBot):
-    client.add_cog(TrackBackCog(client))
+    client.add_cog(MusicTrackBackCog(client))

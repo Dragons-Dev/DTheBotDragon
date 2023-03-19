@@ -10,7 +10,7 @@ from utils import db, utils
 import config
 
 
-class PlayerCog(commands.Cog):
+class MusicPlayerCog(commands.Cog):
     def __init__(self, client):
         self.client: DragonBot = client
 
@@ -38,7 +38,8 @@ class PlayerCog(commands.Cog):
                     "without specifying the channel argument."
                 )
 
-            await ctx.author.voice.channel.connect(cls=DragonPlayer)
+            vc: DragonPlayer = await ctx.author.voice.channel.connect(cls=DragonPlayer)
+            await vc.set_volume(25)
             await ctx.response.send_message(
                 f"Joined the voice channel `{channel}`", delete_after=10
             )
@@ -97,4 +98,4 @@ class PlayerCog(commands.Cog):
 
 
 def setup(client: DragonBot):
-    client.add_cog(PlayerCog(client))
+    client.add_cog(MusicPlayerCog(client))

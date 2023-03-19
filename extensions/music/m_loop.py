@@ -13,7 +13,7 @@ from utils import db
 log = logging.getLogger("DragonLog")
 
 
-class LoopCog(commands.Cog):
+class MusicLoopCog(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -75,4 +75,4 @@ class LoopCog(commands.Cog):
 
 
 def setup(client: DragonBot):
-    client.add_cog(LoopCog(client))
+    client.add_cog(MusicLoopCog(client))

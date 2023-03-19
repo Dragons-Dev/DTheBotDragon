@@ -1,5 +1,6 @@
 import logging
 import json
+import random
 
 import aiohttp
 import discord
@@ -10,7 +11,7 @@ from pycord import multicog
 
 import config
 from view import verification_v
-from utils import db, logger
+from utils import db, logger, statics
 
 log = logging.getLogger("DragonLog")
 
@@ -43,6 +44,7 @@ class DragonBot(commands.Bot):
             data: dict = json.load(f)
         await self.wait_until_ready()
         for node, values in data.items():
+            identifier = node.upper()
             try:
                 await self.pool.create_node(
                     bot=self,
@@ -50,7 +52,7 @@ class DragonBot(commands.Bot):
                     port=values["PORT"],
                     password=values["PASSWORD"],
                     secure=values["SECURE"],
-                    identifier=node,
+                    identifier=identifier,
                     fallback=True,
                     log_level=logging.WARNING,
                     spotify_client_id=(
@@ -63,24 +65,30 @@ class DragonBot(commands.Bot):
                     ),
                 )
                 log.info(
-                    f"Lavalink {node} connected on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
+                    f"Lavalink '{identifier}' connected on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
                 )
             except pomice.NodeConnectionFailure:
                 log.warning(
-                    f"Node didn't respond: Lavalink {node} didn't connect on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
+                    f"Node didn't respond: Lavalink '{identifier}' didn't connect on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
                 )
             except pomice.LavalinkVersionIncompatible:
                 log.error(
-                    f"Incompatible Lavalink Version:  {node} didn't connect on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
+                    f"Incompatible Lavalink Version:  '{identifier}' didn't connect on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
                 )
             except ValueError:
                 log.warning(
-                    f"ValueError: Lavalink {node} didn't connect on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
+                    f"ValueError: Lavalink '{identifier}' didn't connect on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
                 )
             except aiohttp.ContentTypeError:
                 log.warning(
-                    f"ContentTypeError: Lavalink {node} had issues on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
+                    f"ContentTypeError: Lavalink '{identifier}' had issues on {'https' if values['SECURE'] is True else 'http'}://{values['HOST']}:{values['PORT']}"
                 )
+        await self.change_presence(
+            activity=discord.Activity(
+                type=discord.ActivityType.watching, name=f"Watching {len(self.users)}"
+            ),
+            status=discord.Status.online,
+        )
         log.info(f"We got {len(self.pool.nodes)} Nodes in total.")
 
     async def on_ready(self) -> None:
@@ -101,8 +109,8 @@ client = DragonBot(
     strip_after_prefix=True,
     intents=discord.Intents.all(),
     debug_guilds=config.GUILDS,
-    activity=discord.Activity(type=discord.ActivityType.watching, name="you"),
-    state=discord.Status.online,
+    activity=discord.Activity(type=discord.ActivityType.playing, name="starting"),
+    status=discord.Status.dnd,
 )
 
 

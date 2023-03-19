@@ -24,7 +24,7 @@ async def autocomplete(ctx: discord.AutocompleteContext):
     return [track.title for track in queue]
 
 
-class DeleteCog(commands.Cog):
+class MusicDeleteCog(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -83,4 +83,4 @@ class DeleteCog(commands.Cog):
 
 
 def setup(client: DragonBot):
-    client.add_cog(DeleteCog(client))
+    client.add_cog(MusicDeleteCog(client))
