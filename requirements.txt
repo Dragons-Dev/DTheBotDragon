@@ -16,7 +16,7 @@ packaging==23.0
 pathspec==0.11.1
 platformdirs==3.1.1
 pomice @ git+https://github.com/DTheIcyDragon/pomice.git@9f4ad8d879cb1c4157a748a6a799e5ac0b3ac8ad
-py-cord==2.4.0
+py-cord==2.4.1
 pycparser==2.21
 PyNaCl==1.5.0
 yarl==1.8.2
