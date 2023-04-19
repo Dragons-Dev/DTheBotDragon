@@ -17,17 +17,20 @@ class SettingsCog(commands.Cog):
         self,
         ctx: discord.ApplicationContext,
         setting: discord.Option(
+            description="Choose the setting you want to change",
             required=True,
             choices=[
                 discord.OptionChoice("Team Role"),
                 discord.OptionChoice("Mod Log Channel"),
                 discord.OptionChoice("Modmail Channel"),
-                discord.OptionChoice(
-                    "Verification Channel"
-                ),  # TODO: Check if category channel
+                discord.OptionChoice("Verification Channel"),  # TODO: Check if category channel
+                discord.OptionChoice("Join2Create Channel"),
             ],
         ),
-        value: discord.Option(required=True),
+        value: discord.Option(
+            description="Set the value of the option as id (Developer Mode required)",
+            required=True
+        ),
     ):
         for role in ctx.author.roles:
             role: discord.Role = role
@@ -41,11 +44,7 @@ class SettingsCog(commands.Cog):
                 match setting:
                     case "Team Role":
                         embed.description = f"Successfully set {setting} to <@&{value}>"
-                    case "Mod Log Channel":
-                        embed.description = f"Successfully set {setting} to <#{value}>"
-                    case "Modmail Channel":
-                        embed.description = f"Successfully set {setting} to <#{value}>"
-                    case "Verification Channel":
+                    case _:
                         embed.description = f"Successfully set {setting} to <#{value}>"
 
                 await ctx.response.send_message(embed=embed, ephemeral=True)

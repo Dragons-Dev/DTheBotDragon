@@ -2,6 +2,7 @@ import os
 import datetime
 
 import aiosqlite
+from discord import VoiceChannel
 
 from config import DBPATH, DBFOLD
 
@@ -42,6 +43,17 @@ async def set_up() -> None:
             usd INTEGER, 
             gold INTEGER, 
             rolex INTEGER)
+            """
+            )
+
+            await cursor.execute(
+                """
+            CREATE TABLE IF NOT EXISTS join2create (
+            channel INTEGER PRIMARY KEY,
+            owner INTEGER,
+            locked INTEGER,
+            ghosted INTEGER,
+            guild INTEGER)
             """
             )
 
@@ -215,3 +227,57 @@ async def get_bank_acc(member: int) -> tuple:
                 return tuple([100, 50, 0, 0])
             else:
                 return response
+
+
+async def add_join2create(
+        channel: VoiceChannel,
+        owner: int
+) -> None:
+    async with aiosqlite.connect(DBPATH) as conn:
+        async with conn.cursor() as cursor:
+            await cursor.execute(
+                """
+            INSERT INTO join2create (channel, owner, locked, ghosted, guild) VALUES (?, ?, ?, ?, ?)
+            """,
+                (channel.id,
+                 owner,
+                 0,
+                 0,
+                 channel.guild.id),
+            )
+        await conn.commit()
+
+
+async def get_join2create(
+        channel: VoiceChannel
+) -> tuple | None:
+    async with aiosqlite.connect(DBPATH) as conn:
+        async with conn.cursor() as cursor:
+            try:
+                await cursor.execute(
+                    """
+                SELECT * FROM join2create WHERE channel = ? AND guild = ?
+                """,
+                    (channel.id, channel.guild.id),
+                )
+                response = await cursor.fetchone()
+            except AttributeError:
+                response = None
+            if response is None:
+                return None
+            else:
+                return response
+
+
+async def remove_join2create(
+        channel: VoiceChannel
+) -> None:
+    async with aiosqlite.connect(DBPATH) as conn:
+        async with conn.cursor() as cursor:
+            await cursor.execute(
+                """
+            DELETE FROM join2create WHERE channel = ? AND guild = ?
+            """,
+                (channel.id, channel.guild.id),
+            )
+        await conn.commit()

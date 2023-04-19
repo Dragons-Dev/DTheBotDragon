@@ -15,7 +15,9 @@ class EcoBankCog(commands.Cog):
     async def add_bank(self, ctx: commands.Context):
         for member in ctx.guild.members:
             m = await db.get_bank_acc(member.id)
-            print(f"{member.name} got: {m[0]}€ | {m[1]}USD | {m[2]} Gold | {m[3]} Rolex")
+            print(
+                f"{member.name} got: {m[0]}€ | {m[1]}USD | {m[2]} Gold"
+            )
 
 
 def setup(client: DragonBot):
