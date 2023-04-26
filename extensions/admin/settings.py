@@ -21,6 +21,7 @@ class SettingsCog(commands.Cog):
             required=True,
             choices=[
                 discord.OptionChoice("Team Role"),
+                discord.OptionChoice("Verified Role"),
                 discord.OptionChoice("Mod Log Channel"),
                 discord.OptionChoice("Modmail Channel"),
                 discord.OptionChoice("Verification Channel"),  # TODO: Check if category channel
@@ -43,6 +44,8 @@ class SettingsCog(commands.Cog):
                 )
                 match setting:
                     case "Team Role":
+                        embed.description = f"Successfully set {setting} to <@&{value}>"
+                    case "Verified Role":
                         embed.description = f"Successfully set {setting} to <@&{value}>"
                     case _:
                         embed.description = f"Successfully set {setting} to <#{value}>"
