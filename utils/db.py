@@ -166,9 +166,7 @@ async def get_mod_action(
     if action == "*":
         async with aiosqlite.connect(DBPATH) as conn:
             async with conn.cursor() as cursor:
-                await cursor.execute(
-                    "SELECT * FROM mod_actions"
-                )
+                await cursor.execute("SELECT * FROM mod_actions")
                 response = await cursor.fetchall()
                 if response is None:
                     return None
@@ -214,26 +212,17 @@ async def get_bank_acc(member: int) -> tuple:
                 return response
 
 
-async def add_join2create(
-        channel: VoiceChannel,
-        owner: int
-) -> None:
+async def add_join2create(channel: VoiceChannel, owner: int) -> None:
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
             await cursor.execute(
                 "INSERT INTO join2create (channel, owner, locked, ghosted, guild) VALUES (?, ?, ?, ?, ?)",
-                (channel.id,
-                 owner,
-                 0,
-                 0,
-                 channel.guild.id),
+                (channel.id, owner, 0, 0, channel.guild.id),
             )
         await conn.commit()
 
 
-async def get_join2create(
-        channel: VoiceChannel
-) -> tuple | None:
+async def get_join2create(channel: VoiceChannel) -> tuple | None:
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
             try:
@@ -250,11 +239,7 @@ async def get_join2create(
                 return response
 
 
-async def edit_join2create(
-        channel: VoiceChannel,
-        key: str,
-        value: int
-) -> None:
+async def edit_join2create(channel: VoiceChannel, key: str, value: int) -> None:
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
             await cursor.execute(
@@ -264,9 +249,7 @@ async def edit_join2create(
         await conn.commit()
 
 
-async def remove_join2create(
-        channel: VoiceChannel
-) -> None:
+async def remove_join2create(channel: VoiceChannel) -> None:
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
             await cursor.execute(
