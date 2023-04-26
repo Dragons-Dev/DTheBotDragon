@@ -66,37 +66,38 @@ async def insert_setting(setting: str, value: str, guild: int) -> None:
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
             await cursor.execute(
-                """
-            SELECT value FROM settings where setting = ? AND guild = ?
-            """,
+                "SELECT value FROM settings where setting = ? AND guild = ?",
                 (setting, guild),
             )
             response = await cursor.fetchone()
             if response is None:
                 await cursor.execute(
-                    """
-                INSERT INTO settings (setting, value, guild) VALUES (?, ?, ?)
-                """,
+                    "INSERT INTO settings (setting, value, guild) VALUES (?, ?, ?)",
                     (setting, value, guild),
                 )
             else:
                 await cursor.execute(
-                    """
-                UPDATE settings SET value = ? WHERE setting = ? AND guild = ?
-                """,
+                    "UPDATE settings SET value = ? WHERE setting = ? AND guild = ?",
                     (value, setting, guild),
                 )
         await conn.commit()
 
 
 async def get_setting(setting: str, guild: int) -> tuple | None:
+    """
+    Available settings
+        Team Role
+        Verified Role
+        Mod Log Channel
+        Modmail Channel
+        Verification Channel
+        Join2Create Channel
+    """
     setting = setting.lower()
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
             await cursor.execute(
-                """
-            SELECT value FROM settings where setting = ? AND guild = ?
-            """,
+                "SELECT value FROM settings where setting = ? AND guild = ?",
                 (setting, guild),
             )
             response = await cursor.fetchone()
@@ -111,9 +112,7 @@ async def add_mod_action(member: int, moderator: int, reason: str, action: str) 
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
             await cursor.execute(
-                """
-            INSERT INTO mod_actions (member, moderator, reason, action, time) VALUES (?, ?, ?, ?, ?)
-            """,
+                "INSERT INTO mod_actions (member, moderator, reason, action, time) VALUES (?, ?, ?, ?, ?)",
                 (member, moderator, reason, action.lower(), timestamp),
             )
         await conn.commit()
@@ -129,9 +128,7 @@ async def get_mod_action(
         async with aiosqlite.connect(DBPATH) as conn:
             async with conn.cursor() as cursor:
                 await cursor.execute(
-                    """
-                    SELECT id, member, moderator, reason, action, time FROM mod_actions WHERE id = ?
-                    """,
+                    "SELECT id, member, moderator, reason, action, time FROM mod_actions WHERE id = ?",
                     (id,),
                 )
                 response = await cursor.fetchall()
@@ -144,9 +141,7 @@ async def get_mod_action(
         async with aiosqlite.connect(DBPATH) as conn:
             async with conn.cursor() as cursor:
                 await cursor.execute(
-                    """
-                    SELECT id, member, moderator, reason, action, time FROM mod_actions WHERE member = ?
-                    """,
+                    "SELECT id, member, moderator, reason, action, time FROM mod_actions WHERE member = ?",
                     (member,),
                 )
                 response = await cursor.fetchall()
@@ -159,9 +154,7 @@ async def get_mod_action(
         async with aiosqlite.connect(DBPATH) as conn:
             async with conn.cursor() as cursor:
                 await cursor.execute(
-                    """
-                    SELECT id, member, moderator, reason, action, time FROM mod_actions WHERE moderator = ?
-                    """,
+                    "SELECT id, member, moderator, reason, action, time FROM mod_actions WHERE moderator = ?",
                     (moderator,),
                 )
                 response = await cursor.fetchall()
@@ -174,9 +167,7 @@ async def get_mod_action(
         async with aiosqlite.connect(DBPATH) as conn:
             async with conn.cursor() as cursor:
                 await cursor.execute(
-                    """
-                    SELECT * FROM mod_actions
-                    """
+                    "SELECT * FROM mod_actions"
                 )
                 response = await cursor.fetchall()
                 if response is None:
@@ -188,9 +179,7 @@ async def get_mod_action(
         async with aiosqlite.connect(DBPATH) as conn:
             async with conn.cursor() as cursor:
                 await cursor.execute(
-                    """
-                    SELECT id, member, moderator, reason, action, time FROM mod_actions WHERE action = ?
-                    """,
+                    "SELECT id, member, moderator, reason, action, time FROM mod_actions WHERE action = ?",
                     (action,),
                 )
                 response = await cursor.fetchall()
@@ -204,9 +193,7 @@ async def _add_bank_acc(member: int):
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
             await cursor.execute(
-                """
-            INSERT INTO economy (member, euro, usd, gold, rolex) VALUES (?, ?, ?, ?, ?)
-            """,
+                "INSERT INTO economy (member, euro, usd, gold, rolex) VALUES (?, ?, ?, ?, ?)",
                 (member, 100, 50, 0, 0),
             )
         await conn.commit()
@@ -216,9 +203,7 @@ async def get_bank_acc(member: int) -> tuple:
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
             await cursor.execute(
-                """
-                SELECT euro, usd, gold, rolex FROM economy WHERE member = ?
-                """,
+                "SELECT euro, usd, gold, rolex FROM economy WHERE member = ?",
                 (member,),
             )
             response = await cursor.fetchone()
@@ -236,9 +221,7 @@ async def add_join2create(
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
             await cursor.execute(
-                """
-            INSERT INTO join2create (channel, owner, locked, ghosted, guild) VALUES (?, ?, ?, ?, ?)
-            """,
+                "INSERT INTO join2create (channel, owner, locked, ghosted, guild) VALUES (?, ?, ?, ?, ?)",
                 (channel.id,
                  owner,
                  0,
@@ -255,9 +238,7 @@ async def get_join2create(
         async with conn.cursor() as cursor:
             try:
                 await cursor.execute(
-                    """
-                SELECT * FROM join2create WHERE channel = ? AND guild = ?
-                """,
+                    "SELECT * FROM join2create WHERE channel = ? AND guild = ?",
                     (channel.id, channel.guild.id),
                 )
                 response = await cursor.fetchone()
@@ -269,15 +250,27 @@ async def get_join2create(
                 return response
 
 
+async def edit_join2create(
+        channel: VoiceChannel,
+        key: str,
+        value: int
+) -> None:
+    async with aiosqlite.connect(DBPATH) as conn:
+        async with conn.cursor() as cursor:
+            await cursor.execute(
+                "UPDATE join2create SET ? = ? WHERE channel = ? AND guild = ?",
+                (key, value, channel.id),
+            )
+        await conn.commit()
+
+
 async def remove_join2create(
         channel: VoiceChannel
 ) -> None:
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
             await cursor.execute(
-                """
-            DELETE FROM join2create WHERE channel = ? AND guild = ?
-            """,
+                "DELETE FROM join2create WHERE channel = ? AND guild = ?",
                 (channel.id, channel.guild.id),
             )
         await conn.commit()
