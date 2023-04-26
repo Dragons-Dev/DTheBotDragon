@@ -11,7 +11,7 @@ from pycord import multicog
 
 
 import config
-from view import verification_v
+from views import verification_v, board_v, counter_v, join2create_v
 from utils import db, logger, statics
 
 log = logging.getLogger("DragonLog")
@@ -93,6 +93,8 @@ class DragonBot(commands.Bot):
     async def on_ready(self) -> None:
         if self.first_start:
             self.add_view(verification_v.VerificationView())
+            self.add_view(counter_v.CounterView())
+            self.add_view(join2create_v.Join2CreateBoard())
             await db.set_up()
             log.debug("Database setup successful")
             if config.MUSIC_ENABLED:
