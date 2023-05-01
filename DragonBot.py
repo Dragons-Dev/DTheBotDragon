@@ -100,7 +100,9 @@ class DragonBot(commands.Bot):
             if config.MUSIC_ENABLED:
                 await self.read_nodes()
             self.first_start = False
-            log.info(f"Bot started as {self.user.name}#{self.user.discriminator} | {self.user.id}")
+            log.info(
+                f"Bot started as {self.user.name}#{self.user.discriminator} | {self.user.id}"
+            )
             await asyncio.sleep(10)
             await self.change_presence(
                 activity=discord.Activity(
@@ -108,6 +110,7 @@ class DragonBot(commands.Bot):
                 ),
                 status=discord.Status.online,
             )
+
 
 client = DragonBot(
     command_prefix=commands.when_mentioned,

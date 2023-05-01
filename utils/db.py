@@ -243,8 +243,9 @@ async def edit_join2create(channel: VoiceChannel, key: str, value: int) -> None:
     async with aiosqlite.connect(DBPATH) as conn:
         async with conn.cursor() as cursor:
             await cursor.execute(
-                "UPDATE join2create SET ? = ? WHERE channel = ? AND guild = ?",
-                (key, value, channel.id),
+                f"UPDATE join2create SET {key} = {value} WHERE channel = {channel.id} AND guild = {channel.guild.id}"  #  I know this is bad practice, but it does not work the other way
+                #                "UPDATE join2create SET ? = ? WHERE channel = ? AND guild = ?",
+                #                (key, value, channel.id, channel.guild.id),
             )
         await conn.commit()
 

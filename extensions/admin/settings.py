@@ -30,7 +30,7 @@ class SettingsCog(commands.Cog):
         ),
         value: discord.Option(
             description="Set the value of the option as id (Developer Mode required)",
-            required=True
+            required=True,
         ),
     ):
         for role in ctx.author.roles:
