@@ -10,32 +10,41 @@ class Join2CreateCog(commands.Cog):
     def __init__(self, client):
         self.client: DragonBot = client
 
-    @commands.slash_command(name = "permit",
-                            description = "Allow access to your personal channel")
-    async def permit_cmd(self,
-                         ctx: discord.ApplicationContext,
-                         mention: discord.Option(discord.abc.Mentionable),
-                         allow: discord.Option(bool)):
+    @commands.slash_command(
+        name="permit", description="Allow access to your personal channel"
+    )
+    async def permit_cmd(
+        self,
+        ctx: discord.ApplicationContext,
+        mention: discord.Option(discord.abc.Mentionable),
+        allow: discord.Option(bool),
+    ):
         guild = ctx.guild
         member = guild.get_member(ctx.author.id)
         try:
             channel = guild.get_channel(member.voice.channel.id)
         except AttributeError:
-            return await ctx.response.send_message(f"**You are not in a voice channel.**",
-                                                   ephemeral = True,
-                                                   delete_after = 5)
+            return await ctx.response.send_message(
+                f"**You are not in a voice channel.**", ephemeral=True, delete_after=5
+            )
 
-        if await is_owner(user_id = member.id, voice_id = channel):
+        if await is_owner(user_id=member.id, voice_id=channel):
             overwritten = {
-                mention: discord.PermissionOverwrite(connect=True,
-                                                     send_messages=True,
-                                                     read_messages=True,
-                                                     read_message_history=True)
+                mention: discord.PermissionOverwrite(
+                    connect=True,
+                    send_messages=True,
+                    read_messages=True,
+                    read_message_history=True,
+                )
             }
-            await channel.edit(overwrites = overwritten)
-            await ctx.response.send_message(f"{'Allowed' if allow else 'Denied'} access for {mention.mention}".strip("['']"),
-                                            ephemeral=True,
-                                            delete_after=5)
+            await channel.edit(overwrites=overwritten)
+            await ctx.response.send_message(
+                f"{'Allowed' if allow else 'Denied'} access for {mention.mention}".strip(
+                    "['']"
+                ),
+                ephemeral=True,
+                delete_after=5,
+            )
 
     @commands.Cog.listener("on_voice_state_update")
     async def on_join(
