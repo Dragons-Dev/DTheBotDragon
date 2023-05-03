@@ -5,7 +5,7 @@ from discord.ext import commands
 
 from DragonBot import DragonBot
 from utils import db
-from view import warn_v
+from views import warn_v
 
 
 class WarnCog(commands.Cog):

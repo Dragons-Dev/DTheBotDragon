@@ -15,29 +15,32 @@ class VerificationCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member) -> None:
-        resp = await db.get_setting(setting = "verification channel", guild = member.guild.id)
+        resp = await db.get_setting(
+            setting="verification channel", guild=member.guild.id
+        )
         print(resp)
         print(member.name)
         if resp is None:
             return None
         else:
-            inv_category: discord.CategoryChannel = await discord.utils.get_or_fetch(member.guild, "channel", resp[0], default = None)
+            inv_category: discord.CategoryChannel = await discord.utils.get_or_fetch(
+                member.guild, "channel", resp[0], default=None
+            )
         overwrite = {
-            member.guild.default_role: discord.PermissionOverwrite(view_channel = False),
-            member: discord.PermissionOverwrite(view_channel = True,
-                                                send_messages = True,
-                                                use_slash_commands = True)
+            member.guild.default_role: discord.PermissionOverwrite(view_channel=False),
+            member: discord.PermissionOverwrite(
+                view_channel=True, send_messages=True, use_slash_commands=True
+            ),
         }
         channel = await inv_category.create_text_channel(
-            name = f"verify-{member.name}",
-            reason = f"Create verification channel",
-            topic = "/verify um die \"• Verified\" Rolle zu bekommen.",
-            slowmode_delay = 5,
-            overwrites = overwrite
+            name=f"verify-{member.name}",
+            reason=f"Create verification channel",
+            topic='/verify um die "• Verified" Rolle zu bekommen.',
+            slowmode_delay=5,
+            overwrites=overwrite,
         )
-        
-        await channel.send()
 
+        await channel.send()
 
 
 def setup(client: DragonBot):
