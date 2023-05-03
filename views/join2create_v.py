@@ -252,13 +252,13 @@ class Join2CreateBoard(ui.View):
             else:
                 check, owner, locked = values[0], values[1], values[2]
             if check == channel.id and locked == 1:
-                overwritten = {  #  TODO: Take previous perms and add them to the update
-                    guild.default_role: discord.PermissionOverwrite(view_channel=False),
-                    member: discord.PermissionOverwrite(connect=True, speak=True),
-                    verified_role: discord.PermissionOverwrite(connect=True),
-                }
+                prev_perm = channel.overwrites_for(verified_role)
+                prev_perm.update(connect=True,
+                                 send_messages=True,
+                                 read_messages=True,
+                                 read_message_history=True)
+                await channel.set_permissions(target=verified_role, overwrite=prev_perm, reason="Join2Create Ghosted")
                 await db.edit_join2create(channel=channel, key="locked", value=0)
-                await channel.edit(overwrites=overwritten)
                 await interaction.response.send_message(
                     f"**Your channel is now unlocked for {verified_role.name}.**",
                     ephemeral=True,
@@ -266,13 +266,13 @@ class Join2CreateBoard(ui.View):
                 )
 
             else:
-                overwritten = {  #  TODO: Take previous perms and add them to the update
-                    guild.default_role: discord.PermissionOverwrite(view_channel=False),
-                    member: discord.PermissionOverwrite(connect=True, speak=True),
-                    verified_role: discord.PermissionOverwrite(connect=False),
-                }
+                prev_perm = channel.overwrites_for(verified_role)
+                prev_perm.update(connect=False,
+                                 send_messages=False,
+                                 read_messages=False,
+                                 read_message_history=False)
+                await channel.set_permissions(target=verified_role, overwrite=prev_perm, reason="Join2Create Ghosted")
                 await db.edit_join2create(channel=channel, key="locked", value=1)
-                await channel.edit(overwrites=overwritten)
                 await interaction.response.send_message(
                     f"**Your channel is now locked for {verified_role.name}.**",
                     ephemeral=True,
@@ -310,15 +310,10 @@ class Join2CreateBoard(ui.View):
             else:
                 check, owner, ghosted = values[0], values[1], values[3]
             if check == channel.id and ghosted == 1:
-                overwritten = {  #  TODO: Take previous perms and add them to the update
-                    guild.default_role: discord.PermissionOverwrite(view_channel=False),
-                    member: discord.PermissionOverwrite(connect=True, speak=True),
-                    verified_role: discord.PermissionOverwrite(
-                        view_channel=True, connect=True
-                    ),
-                }
+                prev_perm = channel.overwrites_for(verified_role)
+                prev_perm.update(view_channel=True)
+                await channel.set_permissions(target=verified_role, overwrite=prev_perm, reason="Join2Create Ghosted")
                 await db.edit_join2create(channel=channel, key="ghosted", value=0)
-                await channel.edit(overwrites=overwritten)
                 await interaction.response.send_message(
                     f"**Your channel is now visible for {verified_role.name}.**",
                     ephemeral=True,
@@ -326,18 +321,10 @@ class Join2CreateBoard(ui.View):
                 )
 
             else:
-                prev_perm = (
-                    channel.overwrites
-                )  #  TODO: Take previous perms and add them to the update
-                overwritten = {
-                    guild.default_role: discord.PermissionOverwrite(view_channel=False),
-                    member: discord.PermissionOverwrite(connect=True, speak=True),
-                    verified_role: discord.PermissionOverwrite(
-                        view_channel=False, connect=False
-                    ),
-                }
+                prev_perm = channel.overwrites_for(verified_role)
+                prev_perm.update(view_channel=False)
+                await channel.set_permissions(target=verified_role, overwrite=prev_perm, reason="Join2Create Ghosted")
                 await db.edit_join2create(channel=channel, key="ghosted", value=1)
-                await channel.edit(overwrites=overwritten)
                 await interaction.response.send_message(
                     f"**Your channel is now invisible for {verified_role.name}.**",
                     ephemeral=True,
